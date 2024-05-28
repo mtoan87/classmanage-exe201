@@ -11,10 +11,10 @@ namespace Repository.Implement
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        public ManageCourseContext _context;
+        public ManageCourseCenterContext _context;
         public DbSet<T> _dbSet;
 
-        public GenericRepository(ManageCourseContext context)
+        public GenericRepository(ManageCourseCenterContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();

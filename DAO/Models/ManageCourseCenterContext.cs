@@ -6,20 +6,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DAO.Models
 {
-    public partial class ManageCourseContext : DbContext
+    public partial class ManageCourseCenterContext : DbContext
     {
-        public ManageCourseContext()
+        public ManageCourseCenterContext()
         {
         }
 
-        public ManageCourseContext(DbContextOptions<ManageCourseContext> options)
+        public ManageCourseCenterContext(DbContextOptions<ManageCourseCenterContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<AcademicTranscript> AcademicTranscripts { get; set; }
-        public virtual DbSet<Cart> Carts { get; set; }
-        public virtual DbSet<CartItem> CartItems { get; set; }
         public virtual DbSet<Child> Children { get; set; }
         public virtual DbSet<ChildrenClass> ChildrenClasses { get; set; }
         public virtual DbSet<Class> Classes { get; set; }
@@ -27,8 +25,6 @@ namespace DAO.Models
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Feedback> Feedbacks { get; set; }
         public virtual DbSet<Manager> Managers { get; set; }
-        public virtual DbSet<Parent> Parents { get; set; }
-        public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<TimeTable> TimeTables { get; set; }
 
@@ -37,7 +33,7 @@ namespace DAO.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=(local);Uid=sa;Pwd=1234567890;Database=ManageCourse");
+                optionsBuilder.UseSqlServer("Server=(local);uid=sa;pwd=1234567890;database=ManageCourseCenter;TrustServerCertificate=True;");
             }
         }
 
@@ -83,75 +79,19 @@ namespace DAO.Models
                     .WithMany(p => p.AcademicTranscripts)
                     .HasForeignKey(d => d.ChildrenId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__AcademicT__child__5441852A");
+                    .HasConstraintName("FK__AcademicT__child__5165187F");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.AcademicTranscripts)
                     .HasForeignKey(d => d.CourseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__AcademicT__cours__534D60F1");
+                    .HasConstraintName("FK__AcademicT__cours__5070F446");
 
                 entity.HasOne(d => d.Teacher)
                     .WithMany(p => p.AcademicTranscripts)
                     .HasForeignKey(d => d.TeacherId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__AcademicT__teach__52593CB8");
-            });
-
-            modelBuilder.Entity<Cart>(entity =>
-            {
-                entity.ToTable("Cart");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.ParentId).HasColumnName("parent_id");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Parent)
-                    .WithMany(p => p.Carts)
-                    .HasForeignKey(d => d.ParentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Cart__parent_id__5EBF139D");
-            });
-
-            modelBuilder.Entity<CartItem>(entity =>
-            {
-                entity.ToTable("CartItem");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CartId).HasColumnName("cart_id");
-
-                entity.Property(e => e.ChildrenId).HasColumnName("children_id");
-
-                entity.Property(e => e.ClassId).HasColumnName("class_id");
-
-                entity.Property(e => e.CourseId).HasColumnName("course_id");
-
-                entity.HasOne(d => d.Cart)
-                    .WithMany(p => p.CartItems)
-                    .HasForeignKey(d => d.CartId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CartItem__cart_i__619B8048");
-
-                entity.HasOne(d => d.Children)
-                    .WithMany(p => p.CartItems)
-                    .HasForeignKey(d => d.ChildrenId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CartItem__childr__6477ECF3");
-
-                entity.HasOne(d => d.Class)
-                    .WithMany(p => p.CartItems)
-                    .HasForeignKey(d => d.ClassId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CartItem__class___6383C8BA");
-
-                entity.HasOne(d => d.Course)
-                    .WithMany(p => p.CartItems)
-                    .HasForeignKey(d => d.CourseId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CartItem__course__628FA481");
+                    .HasConstraintName("FK__AcademicT__teach__4F7CD00D");
             });
 
             modelBuilder.Entity<Child>(entity =>
@@ -161,6 +101,11 @@ namespace DAO.Models
                 entity.Property(e => e.BirthDay)
                     .HasColumnType("date")
                     .HasColumnName("birth_day");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("email");
 
                 entity.Property(e => e.FullName)
                     .IsRequired()
@@ -173,27 +118,20 @@ namespace DAO.Models
                     .IsRequired()
                     .HasColumnName("img_url");
 
-                entity.Property(e => e.ParentId).HasColumnName("parent_id");
-
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("password");
 
+                entity.Property(e => e.Phone)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("phone");
+
                 entity.Property(e => e.Role).HasColumnName("role");
 
                 entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.Username)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("username");
-
-                entity.HasOne(d => d.Parent)
-                    .WithMany(p => p.Children)
-                    .HasForeignKey(d => d.ParentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Children__parent__4BAC3F29");
             });
 
             modelBuilder.Entity<ChildrenClass>(entity =>
@@ -210,13 +148,13 @@ namespace DAO.Models
                     .WithMany(p => p.ChildrenClasses)
                     .HasForeignKey(d => d.ChildrenId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ChildrenC__child__72C60C4A");
+                    .HasConstraintName("FK__ChildrenC__child__6754599E");
 
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.ChildrenClasses)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ChildrenC__class__71D1E811");
+                    .HasConstraintName("FK__ChildrenC__class__66603565");
             });
 
             modelBuilder.Entity<Class>(entity =>
@@ -250,13 +188,13 @@ namespace DAO.Models
                     .WithMany(p => p.Classes)
                     .HasForeignKey(d => d.CourseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Class__course_id__5AEE82B9");
+                    .HasConstraintName("FK__Class__course_id__5812160E");
 
                 entity.HasOne(d => d.Teacher)
                     .WithMany(p => p.Classes)
                     .HasForeignKey(d => d.TeacherId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Class__teacher_i__5BE2A6F2");
+                    .HasConstraintName("FK__Class__teacher_i__59063A47");
             });
 
             modelBuilder.Entity<ClassTime>(entity =>
@@ -287,7 +225,7 @@ namespace DAO.Models
                     .WithMany(p => p.ClassTimes)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ClassTime__class__6754599E");
+                    .HasConstraintName("FK__ClassTime__class__5BE2A6F2");
             });
 
             modelBuilder.Entity<Course>(entity =>
@@ -344,7 +282,7 @@ namespace DAO.Models
                     .WithMany(p => p.Feedbacks)
                     .HasForeignKey(d => d.ChildrenClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Feedback__childr__75A278F5");
+                    .HasConstraintName("FK__Feedback__childr__6A30C649");
             });
 
             modelBuilder.Entity<Manager>(entity =>
@@ -389,73 +327,6 @@ namespace DAO.Models
                 entity.Property(e => e.Status).HasColumnName("status");
             });
 
-            modelBuilder.Entity<Parent>(entity =>
-            {
-                entity.ToTable("Parent");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.BirthDay)
-                    .HasColumnType("date")
-                    .HasColumnName("birth_day");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("email");
-
-                entity.Property(e => e.FullName)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("full_name");
-
-                entity.Property(e => e.Gender).HasColumnName("gender");
-
-                entity.Property(e => e.ImgUrl).HasColumnName("img_url");
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(128)
-                    .HasColumnName("password");
-
-                entity.Property(e => e.Phone)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("phone");
-
-                entity.Property(e => e.Role).HasColumnName("role");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-            });
-
-            modelBuilder.Entity<Payment>(entity =>
-            {
-                entity.ToTable("Payment");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CartId).HasColumnName("cart_id");
-
-                entity.Property(e => e.CreateTime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_time");
-
-                entity.Property(e => e.Method).HasColumnName("method");
-
-                entity.Property(e => e.PaidTime)
-                    .HasColumnType("datetime")
-                    .HasColumnName("paid_time");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Cart)
-                    .WithMany(p => p.Payments)
-                    .HasForeignKey(d => d.CartId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Payment__cart_id__7B5B524B");
-            });
-
             modelBuilder.Entity<Teacher>(entity =>
             {
                 entity.ToTable("Teacher");
@@ -496,6 +367,11 @@ namespace DAO.Models
                 entity.Property(e => e.Role).HasColumnName("role");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("username");
             });
 
             modelBuilder.Entity<TimeTable>(entity =>
@@ -532,25 +408,25 @@ namespace DAO.Models
                     .WithMany(p => p.TimeTables)
                     .HasForeignKey(d => d.ChildrenId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__TimeTable__child__6E01572D");
+                    .HasConstraintName("FK__TimeTable__child__628FA481");
 
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.TimeTables)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__TimeTable__class__6EF57B66");
+                    .HasConstraintName("FK__TimeTable__class__6383C8BA");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.TimeTables)
                     .HasForeignKey(d => d.CourseId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__TimeTable__cours__6D0D32F4");
+                    .HasConstraintName("FK__TimeTable__cours__619B8048");
 
                 entity.HasOne(d => d.Teacher)
                     .WithMany(p => p.TimeTables)
                     .HasForeignKey(d => d.TeacherId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__TimeTable__teach__6C190EBB");
+                    .HasConstraintName("FK__TimeTable__teach__60A75C0F");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -10,7 +10,6 @@ namespace DAO.Models
         public Course()
         {
             AcademicTranscripts = new HashSet<AcademicTranscript>();
-            CartItems = new HashSet<CartItem>();
             Classes = new HashSet<Class>();
             TimeTables = new HashSet<TimeTable>();
         }
@@ -27,7 +26,6 @@ namespace DAO.Models
         public int Status { get; set; }
 
         public virtual ICollection<AcademicTranscript> AcademicTranscripts { get; set; }
-        public virtual ICollection<CartItem> CartItems { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
         public virtual ICollection<TimeTable> TimeTables { get; set; }
     }

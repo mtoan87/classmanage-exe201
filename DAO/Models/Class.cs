@@ -9,7 +9,6 @@ namespace DAO.Models
     {
         public Class()
         {
-            CartItems = new HashSet<CartItem>();
             ChildrenClasses = new HashSet<ChildrenClass>();
             ClassTimes = new HashSet<ClassTime>();
             TimeTables = new HashSet<TimeTable>();
@@ -26,7 +25,6 @@ namespace DAO.Models
 
         public virtual Course Course { get; set; }
         public virtual Teacher Teacher { get; set; }
-        public virtual ICollection<CartItem> CartItems { get; set; }
         public virtual ICollection<ChildrenClass> ChildrenClasses { get; set; }
         public virtual ICollection<ClassTime> ClassTimes { get; set; }
         public virtual ICollection<TimeTable> TimeTables { get; set; }
